@@ -2,7 +2,7 @@
 
 //this was where I mainly has issues, I need to make sure that I am properly defining what I am working on before I actually try to do things with it
 
-var map = L.map('map').setView([25.531799, -80.318645], 13);
+var map = L.map('map').setView([20, 0], 2);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/fatima-alejo/cm9641e8k003r01qh78je06h6/tiles/512/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiZmF0aW1hLWFsZWpvIiwiYSI6ImNtOGN4MWEwbTI0eTkyaXBzc2VpZXZqdXcifQ.OOX9uS34z6I0ztBKBPSbtA', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, ' +
@@ -13,57 +13,42 @@ L.tileLayer('https://api.mapbox.com/styles/v1/fatima-alejo/cm9641e8k003r01qh78je
     maxZoom: 19
 }).addTo(map);
 
-//this creates the geojson point
+//popups
 
-var geojsonFeature = {
-    "type": "Feature",
-    "properties": {
-        "name": "The edge of the world",
-        "popupContent": "My favorite local spot"
-    },
-    "geometry": {
-        "type": "Point",
-        "coordinates": [25.531799, -80.318645]
-    }
-};
+function onEachFeature(feature, layer) {
 
-//this is what adds it to the map
+    var popupContent = "";
+    if (feature.properties) {
 
-L.geoJSON(geojsonFeature, {
-    onEachFeature: function (feature, layer) {
-        if (feature.properties && feature.properties.popupContent) {
-            layer.bindPopup(feature.properties.popupContent);
+        for (var property in feature.properties){
+            popupContent += "<p>" + property + ": " + feature.properties[property] + "</p>";
         }
-    }
-}).addTo(map);
-
-//this is how we tell the script that we want to add a polygon
-
-var myPolygon = {
-    "type": "Feature",
-    "properties": {
-        "name": "My Area",
-        "popupContent": "Edge of the World."
-    },
-    "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-            [-80.319, 25.532],
-            [-80.318, 25.532],
-            [-80.318, 25.531],
-            [-80.319, 25.531],
-            [-80.319, 25.532]
-        ]]
-    }
+        layer.bindPopup(popupContent);
+    };
 };
 
-L.geoJSON(myPolygon, {
-    style: {
-        color: "#ff7800",
-        weight: 2,
-        opacity: 0.65
-    },
-    onEachFeature: function (feature, layer) {
-        layer.bindPopup(feature.properties.popupContent);
-    }
-}).addTo(map);
+function getData() {
+    fetch("data/megaCities.geojson")
+        .then(function(response){
+            return response.json();
+        })
+        .then(function(json){            
+            var geojsonMarkerOptions = {
+                radius: 8,
+                fillColor: "#ff7800",
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            };
+
+        L.geoJSON(json, {
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, geojsonMarkerOptions);
+                },
+                onEachFeature: onEachFeature  // Use your defined function here!
+            }).addTo(map);
+        });
+}
+
+getData();
