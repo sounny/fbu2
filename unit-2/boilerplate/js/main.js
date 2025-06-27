@@ -70,28 +70,59 @@ function createPropSymbols(data){
             };
 
         L.geoJSON(data, {
-                pointToLayer: function (feature, latlng) {
-//Step 5: determine the value for the selected attribute
-                var attValue = Number(feature.properties[attribute]);
-                //Step 6: Give each feature's circle marker a radius based on its attribute value
-                geojsonMarkerOptions.radius = calcPropRadius(attValue);
+    pointToLayer: function (feature, latlng) {
 
-                //create the circle markers
-                return L.circleMarker(latlng, geojsonMarkerOptions);
+        // Step 5: determine the value for the selected attribute
 
-                //add popups
+        var attValue = Number(feature.properties[attribute]);
+        
+        // Step 6: Give each feature's circle marker a radius based on its attribute value
+        
+        geojsonMarkerOptions.radius = calcPropRadius(attValue);
 
-               /********************* var */
-            }
-        }).addTo(map);
-};
+        // Create the circle marker
+        
+        var layer = L.circleMarker(latlng, geojsonMarkerOptions);
+
+        // Create the popup content
+        
+        var popupContent = "<p><b>City:</b> " + feature.properties.City + "</p><p><b>" + attribute + ":</b> " + feature.properties[attribute] + "</p>";
+
+        // Attach the popup to the marker
+        
+        layer.bindPopup(popupContent);
+
+        // Return the circle marker to the L.geoJSON
+        
+        return layer;
+    }
+}).addTo(map);
+}
+
+//Step 7: slider portiton
+
+function createSequenceControls(){
+    var slider = "<input class='range-slider' type='range'></input>";
+    document.querySelector("#panel").insertAdjacentHTML('beforeend',slider);
+
+    //slider attributes
+    document.querySelector(".range-slider").max = 6;
+    document.querySelector(".range-slider").min = 0;
+    document.querySelector(".range-slider").value = 0;
+    document.querySelector(".range-slider").step = 1;
+
+    document.querySelector('#reverse').insertAdjacentHTML('beforeend',"<img src='img/leftflower.png' width='30' height='30'>");
+    document.querySelector('#forward').insertAdjacentHTML('beforeend',"<img src='img/rightflower.png' width='30' height='30'>");
+}
 
 //Step 2: importing the GeoJSON data
 
-function getData(){
+function getData(map){
+
     //load the data using fetch funtion
+
     fetch("data/MegaCities.geojson")
-        .then(function(response) {
+        .then(function(response){
             return response.json();
         })
         .then(function(json){
@@ -99,6 +130,7 @@ function getData(){
             minValue = calculateMinValue(json);
             //call funtion to create proportional symbols
             createPropSymbols(json);
+            createSequenceControls();
         })
 };
 
