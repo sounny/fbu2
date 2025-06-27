@@ -37,7 +37,7 @@ L.geoJSON(geojsonFeature, {
     }
 }).addTo(map);
 
-//no idea
+
 
 var myPolygon = {
     "type": "Feature",

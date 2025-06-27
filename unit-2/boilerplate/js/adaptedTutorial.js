@@ -46,7 +46,7 @@ function getData() {
                 pointToLayer: function (feature, latlng) {
                     return L.circleMarker(latlng, geojsonMarkerOptions);
                 },
-                onEachFeature: onEachFeature  // Use your defined function here!
+                onEachFeature: onEachFeature
             }).addTo(map);
         });
 }
