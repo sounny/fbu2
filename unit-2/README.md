@@ -5,7 +5,7 @@ Repository for Unit 1 of the Web Mapping Workbook.
 Final Project outline
 
 
-Target User: People intrested in public health/Measles outbreak
+Target User: People interested in public health/Measles outbreak
 
 Motivation: How help people understand and identify vulnerable populations and areas with low immunization coverage. To keep the public informed and help bring awareness to the importance of the measles vaccine.
 
